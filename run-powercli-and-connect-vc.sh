@@ -1,14 +1,22 @@
 #!/bin/bash
 
 # === Constants ===
-DEBUG=0 # 1-on, 0-off
+DEBUG=1 # 1-on, 0-off
+
 BASE_DIR="$HOME/powerclicore"
 BASE_DIR_SETTINGS="$BASE_DIR/settings"
 BASE_DIR_DATA="$BASE_DIR/data"
 BASE_DIR_SCRIPTS="$BASE_DIR/scripts"
+
+REMOTE_BASE_DIR="/root"                                                         
+REMOTE_BASE_DIR_SETTINGS="$REMOTE_BASE_DIR/.local/share/VMware/PowerCLI"        
+REMOTE_BASE_DIR_DATA="$REMOTE_BASE_DIR/data"                                    
+REMOTE_BASE_DIR_SCRIPTS="$REMOTE_BASE_DIR/scripts"  
+
 VCSERVER_FILE="$BASE_DIR_SETTINGS/vcenter-server.txt"
 VCUSER_FILE="$BASE_DIR_SETTINGS/vcenter-user.txt"
 VCPASS_FILE="$BASE_DIR_SETTINGS/vcenter-password.txt"
+
 DOCKER_IMAGE="vmware/powerclicore"
 
 # === Colors ===
@@ -23,21 +31,25 @@ debug() {
   fi
 }
 
-# === Ensure base directory exists ===
-debug "BASE_DIR: $BASE_DIR"
-mkdir -p "$BASE_DIR"
-
-# === Ensure settings directory exists ===
-debug "BASE_DIR_SETTINGS: $BASE_DIR_SETTINGS"
-mkdir -p "$BASE_DIR_SETTINGS"
-
-# === Ensure data directory exists ===
-debug "BASE_DIR_DATA: $BASE_DIR_DATA"
-mkdir -p "$BASE_DIR_DATA"
-
-# === Ensure scripts directory exists ===
-debug "BASE_DIR_SCRIPTS: $BASE_DIR_SCRIPTS"
-mkdir -p "$BASE_DIR_SCRIPTS"
+# === Ensure base directory exists ===                                          
+debug "BASE_DIR: $BASE_DIR"                                                     
+debug "REMOTE_BASE_DIR: $REMOTE_BASE_DIR"                                       
+mkdir -p "$BASE_DIR"                                                            
+                                                                                
+# === Ensure settings directory exists ===                                      
+debug "BASE_DIR_SETTINGS: $BASE_DIR_SETTINGS"                                   
+debug "REMOTE_BASE_DIR_SETTINGS: $REMOTE_BASE_DIR_SETTINGS"                     
+mkdir -p "$BASE_DIR_SETTINGS"                                                   
+                                                                                
+# === Ensure data directory exists ===                                          
+debug "BASE_DIR_DATA: $BASE_DIR_DATA"                                           
+debug "REMOTE_BASE_DIR_DATA: $REMOTE_BASE_DIR_DATA"                             
+mkdir -p "$BASE_DIR_DATA"                                                       
+                                                                                
+# === Ensure scripts directory exists ===                                       
+debug "BASE_DIR_SCRIPTS: $BASE_DIR_SCRIPTS"                                     
+debug "REMOTE_BASE_DIR_SCRIPTS: $REMOTE_BASE_DIR_SCRIPTS"                       
+mkdir -p "$BASE_DIR_SCRIPTS" 
 
 # === Prompt for server if not set ===
 debug "VCSERVER_FILE: $VCSERVER_FILE"
@@ -76,7 +88,7 @@ if [[ ! -f "$VCPASS_FILE" ]]; then
   echo "✅ Password saved to $VCPASS_FILE"
 fi
 
-# === Optional: Check Docker image exists ===
+# === Check Docker image exists ===
 if ! docker image inspect "$DOCKER_IMAGE" > /dev/null 2>&1; then
   echo -e "${RED}❌ Docker image '$DOCKER_IMAGE' not found. Pulling now...${NC}"
   docker pull "$DOCKER_IMAGE" || {
@@ -87,9 +99,9 @@ fi
 
 # === Run Docker PowerCLI ===
 docker run -it --rm \
-  -v "$BASE_DIR_SCRIPTS:/root/scripts" \
-  -v "$BASE_DIR_DATA:/root/data" \
-  -v "$BASE_DIR_SETTINGS:/root/.local/share/VMware/PowerCLI" \
+  -v "$BASE_DIR_SCRIPTS:$REMOTE_BASE_DIR_SCRIPTS" \
+  -v "$BASE_DIR_DATA:$REMOTE_BASE_DIR_DATA" \
+  -v "$BASE_DIR_SETTINGS:$REMOTE_BASE_DIR_SETTINGS" \
   --entrypoint='/usr/bin/pwsh' \
   "$DOCKER_IMAGE" \
   -NoExit \
