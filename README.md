@@ -51,6 +51,7 @@ If any of these files are missing, the script will prompt you to enter the value
 
 ```bash
 ./run-powercli-and-connect-vc.sh
+```
 
 ## `run-script-get-vms.sh`
 
@@ -70,4 +71,5 @@ The script to run is defined as PS1_SCRIPT="$REMOTE_BASE_DIR_SCRIPTS/get-vms.ps1
 
 ```bash
 ./run-script-get-vms.sh
+```
 
