@@ -24,6 +24,7 @@ This setup allows you to:
 
 ```bash
 ./run-powercli.sh
+```
 
 ## `run-powercli-and-connect-vc.sh`
 
