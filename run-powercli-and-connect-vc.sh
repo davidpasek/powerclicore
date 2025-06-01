@@ -109,8 +109,8 @@ docker run -it --rm \
     try {
       \$password = Get-Content '/root/.local/share/VMware/PowerCLI/vcenter-password.txt' | ConvertTo-SecureString -AsPlainText -Force;
       \$cred = New-Object System.Management.Automation.PSCredential((Get-Content '/root/.local/share/VMware/PowerCLI/vcenter-user.txt'), \$password);
-      Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP \$true -Confirm:\$false | Out-Null; 
-      Set-PowerCLIConfiguration -InvalidCertificateAction:ignore -Confirm:\$false | Out-Null;
+      Set-PowerCLIConfiguration -Scope User -ParticipateInCEIP \$true -Confirm:\$false -WarningAction SilentlyContinue | Out-Null; 
+      Set-PowerCLIConfiguration -InvalidCertificateAction:ignore -Confirm:\$false -WarningAction SilentlyContinue | Out-Null;
       Connect-VIServer -Server (Get-Content '/root/.local/share/VMware/PowerCLI/vcenter-server.txt') -Credential \$cred -WarningAction Stop;
       Write-Host '✅ Connected successfully.' -ForegroundColor Green;
     }
